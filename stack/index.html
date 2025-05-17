@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple Browser</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+
+        input {
+            width: 300px;
+        }
+
+        button {
+            margin: 5px;
+        }
+
+        #display {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Mini Web Browser</h2>
+    <input type="text" id="domainInput" placeholder="Enter domain..." />
+    <button onclick="visitDomain()">Visit</button>
+    <br>
+    <button onclick="goBack()">⬅ Back</button>
+    <button onclick="goForward()">Forward ➡</button>
+    <div id="display">No domain visited</div>
+
+    <script>
+        class BrowserStack {
+            #backStack = []
+            #forwardStack = []
+
+            constructor() {
+                this.backStack = []
+                this.forwardStack = []
+                this.current = null;
+            }
+
+            visit(domain) {
+                if (this.current) this.#backStack.push(this.current)
+                this.current = domain
+                this.#forwardStack = []
+            }
+
+            goBack() {
+                if (this.#backStack.length > 0) {
+                    this.#forwardStack.push(this.current)
+                    this.current = this.#backStack.pop()
+                }
+            }
+
+            goForward() {
+                if (this.#forwardStack.length > 0) {
+                    this.#backStack.push(this.current)
+                    this.current = this.#forwardStack.pop()
+                }
+            }
+
+            getCurrent() {
+                return this.current
+            }
+        }
+
+
+        const browser = new BrowserStack()
+
+        function visitDomain() {
+            const input = document.getElementById('domainInput').value;
+            browser.visit(input)
+            updateDisplay()
+        }
+
+        function goBack() {
+            browser.goBack()
+            updateDisplay()
+        }
+
+        function goForward() {
+            browser.goForward()
+            updateDisplay()
+        }
+
+        function updateDisplay() {
+            const domain = browser.getCurrent();
+            document.getElementById('display').textContent =
+                domain ? `Currently at: ${domain}` : 'No domain visited';
+            document.getElementById('domainInput').value = domain || ''
+        }
+
+    </script>
+</body>
+
+</html>
